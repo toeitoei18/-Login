@@ -1,0 +1,81 @@
+﻿@page "/login"
+@using Book.Class
+@inject NavigationManager NavigationManager
+
+
+<PageTitle>Login</PageTitle> @*ชื่อบนแท็บของหน้านี้*@
+
+<h1<font color="red">Login</font></h1>  @*ให้คำว่า Login แสดงที่หน้าเว็บ และฟ้อนสีเป็นสีแดง*@
+
+@if (_isProcessing)@*เงื่อนไขif ของตัวแปร_isProcessing*@
+{
+    //<div class="overlay"></div>
+    //<div class="loading-wrapper">
+    <div class="loading-text">Logging-in...</div>//ให้แสดงคำว่าLogging-in.. ออกมาถ้ากดปุ่มbutton
+    //</div>
+}
+
+
+
+<EditForm Model="user" OnSubmit="HandleLogin">
+    @*ฟอร์มหน้าบ้านให้กรอกมือ*@
+
+    <div class="form-group">
+        <label for="username">Username</label>
+        <InputText @bind-Value="user.Username" class="form-control" placeholder="Enter username" />
+        @*<InputText id="username" @bind-Value="user.Username" class="form-control" />*@
+    </div>
+    <div class="form-group">
+        <label for="password">Password</label>
+        <InputText @bind-Value="user.Password" class="form-control" placeholder="Enter password" />
+        @*<InputText id="password" @bind-Value="user.Password" type="password" class="form-control" />*@
+    </div>
+
+    @*@if (!string.IsNullOrEmpty(_error)) //ถอยหลังไปหน่อย1.04 คลิป 4
+        {
+            <p class="text-danger">@_error</p>
+        }*@
+
+    <br />
+
+    <button type="submit" class="btn btn-primary">Login</button> @*ปุ่มคลิกเพื่อเข้าสู่ระบบ*@
+    @*<button @onclick="AddUser" class="btn btn-primary">Login</button>*@
+
+</EditForm>
+
+
+@code {
+    private User user = new User(); //เป็นการประกาศUserที่เพิ่มเข้ามาใหม่ โดยใช้คลาสชื่อ Userที่มีการประกาศชนิดตัวแปรไว้แล้ว
+
+    private bool _isProcessing = false; //ตัวแปรชื่อ_isProcessing มีค่าbool เป็น false
+    private string? _error = null; //ต้องทำที่คลิปใหม่เพิ่มยังไม่สมบูรณ์
+
+    private async Task HandleLogin()
+    {
+
+        _isProcessing = true; //ถ้าตัวแปรชื่อ_isProcessing เป็น trueให้ลงในลูปนี้
+        try
+        {
+            await Task.Delay(5000); //ขึ้นคำว่าLogging-in... เป็นเวลา 5 วิ
+            if (user.Username == "Toei") //ถ้าUsername เป็น Toei
+            {
+                NavigationManager.NavigateTo("/"); //ให้จัดการพาไปที่หน้า "/" คือหน้า Home
+            }
+            else //แต่ถ้าไม่ใช่
+            {
+                NavigationManager.NavigateTo("/counter"); //ให้จัดการพาไปที่หน้า "/counter"
+            }
+
+        }
+
+        catch (Exception ex) //ต้องศึกษาคลิปใหม่เพิ่ม
+        {
+            _isProcessing = false;
+            _error = ex.Message;
+
+        }
+        @*try ทำหลายๆรอบ ถ้ามันไม่ได้จริงๆจะออกมาเป็นเอ่อเร้อให้เราดู*@
+
+    }
+}
+
