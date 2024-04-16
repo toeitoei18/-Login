@@ -1,0 +1,38 @@
+﻿@page "/clock"
+
+<div class="clock-container">
+    <div class="clock">
+        <span class="h12"></span>
+        <span class="h3"></span>
+        <span class="h6"></span>
+        <span class="h9"></span>
+        <div class="hour" style="transform:rotate(@(hr)deg);"><div></div></div>
+        <div class="minute" style="transform:rotate(@(min)deg);"><div></div></div>
+        <div class="second" style="transform:rotate(@(sec)deg);"><div></div></div>
+        <span class="ctr"></span>
+    </div>
+</div>
+
+@code {
+    System.Threading.Timer timer;
+    double hr, min, sec;
+
+    // NOTE: this math can be simplified!!!
+    private void SetClock(object stateInfo)
+    {
+        var time = DateTime.Now;
+        hr = 360.0 * time.Hour / 12 + 30.0 * time.Minute / 60.0;
+        min = 360.0 * time.Minute / 60 + 6.0 * time.Second / 60.0;
+        sec = 360.0 * time.Second / 60 + 6.0 * time.Millisecond / 1000.0;
+        StateHasChanged(); // MUST CALL StateHasChanged() BECAUSE THIS IS TRIGGERED BY A TIMER INSTEAD OF A USER EVENT
+    }
+
+    protected override async Task OnInitializedAsync()
+    {
+        await base.OnInitializedAsync();
+
+        SetClock(null);
+
+        timer = new System.Threading.Timer(SetClock, new System.Threading.AutoResetEvent(false), 10, 10); // 10 milliseconds
+    }
+}
